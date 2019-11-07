@@ -18,17 +18,19 @@ exports.up = function(knex) {
   .createTable('zoos', tbl => {
       tbl.increments();
       tbl.string('name', 255).notNullable();
-      tbl.string('address', 255);
+      tbl.string('address', 512);
   })
   .createTable('animal_zoos', tbl => {
       tbl.increments();
       tbl.integer('zoo_id')
+      .unsigned()
       .references('id')
       .inTable('zoos')
       .onDelete('RESTRICT') 
       .onUpdate('CASCADE');
 
       tbl.integer('animal_id')
+      .unsigned()
       .references('id')
       .inTable('animals')
       .onDelete('RESTRICT') 
@@ -40,5 +42,8 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-  
+  return knex.schema.dropTableIfExists('animal_zoos')
+  .dropTableIfExists('animals')
+  .dropTableIfExists('zoos')
+  .dropTableIfExists('species');
 };
